@@ -1,34 +1,32 @@
-# Grand-Marina-MQTT-Pipeline
-
-IoT MQTT pipeline simulating real-time water sensor telemetry using Python and Mosquitto (Sensor → Broker → Dashboard)
-
-
-
 \# Grand Marina MQTT Pipeline
 
 
 
-\## Overview
+\*\*System Type:\*\* IoT Water Monitoring Pipeline  
 
-This project simulates a real-time IoT data pipeline for water monitoring using MQTT. A Python-based sensor publisher generates realistic telemetry data and sends it to a Mosquitto broker, while a subscriber dashboard receives and displays the data in real time.
+\*\*Architecture:\*\* Sensor → MQTT Broker → Dashboard  
 
-
-
-The pipeline follows a standard IoT architecture:
+\*\*Security State:\*\* Intentionally Insecure Baseline  
 
 
 
-Sensor → Broker → Dashboard
+\---
 
 
 
-\## Technologies Used
+\## Executive Summary
 
-\- Python
 
-\- MQTT (paho-mqtt)
 
-\- Mosquitto Broker
+This project builds a working real-time IoT data pipeline for The Grand Marina water monitoring environment. A Python-based HYDROLOGIC sensor publisher generates realistic pressure and flow telemetry, sends the readings to a Mosquitto MQTT broker, and a Python subscriber dashboard receives and displays the readings in real time.
+
+
+
+The goal of this project was to validate basic MQTT publish/subscribe behavior before adding future security controls such as TLS encryption, authentication, and topic-level access control.
+
+
+
+\---
 
 
 
@@ -36,113 +34,201 @@ Sensor → Broker → Dashboard
 
 
 
-\- \*\*Publisher\*\*: Simulates a HYDROLOGIC water sensor device
+```mermaid
 
-\- \*\*Broker\*\*: Mosquitto MQTT server handling message routing
+flowchart LR
 
-\- \*\*Subscriber\*\*: Dashboard that processes and displays sensor data
+&#x20;   A\[HYDROLOGIC Sensor Publisher<br>sensor\_publisher.py] -->|Publishes JSON telemetry<br>Topic: hydroficient/grandmarina/sensors/main-building/readings| B\[Mosquitto MQTT Broker<br>Port 1883]
 
+&#x20;   B -->|Routes messages| C\[Dashboard Subscriber<br>dashboard\_subscriber.py]
 
-
-\## Features
-
-\- Real-time data streaming every 2 seconds
-
-\- JSON-formatted telemetry data
-
-\- MQTT topic-based message routing
-
-\- Dashboard-style terminal output
-
-\- Graceful handling of non-JSON messages
+&#x20;   C -->|Displays pressure, flow,<br>timestamp, counter, and device ID| D\[Terminal Dashboard Output]
 
 
 
-\## Screenshots
+MQTT Topic Used
+
+hydroficient/grandmarina/sensors/main-building/readings
 
 
 
-\### Mosquitto Broker Running
-
-!\[Mosquitto](screenshots\\mosquitto-running.png)
+The subscriber listens to all Grand Marina topics using:
 
 
 
-\### Publisher Output
-
-!\[Publisher](screenshots/publisher-output.png)
+hydroficient/grandmarina/#
 
 
 
-\### Subscriber Dashboard
+Technologies Used
 
-!\[Subscriber](screenshots/subscriber-output.png)
+Python
 
+Paho MQTT
 
+Mosquitto MQTT Broker
 
-\### End-to-End Pipeline
+JSON telemetry messages
 
-!\[Pipeline](screenshots/pipeline-side-by-side.png)
-
-
-
-\## How to Run
+Windows / Anaconda Prompt
 
 
 
-\### 1. Install dependencies
+Project Components
 
-```bash
+| File                      | Purpose                                                                           |
+
+| ------------------------- | --------------------------------------------------------------------------------- |
+
+| `sensor\_publisher.py`     | Simulates a HYDROLOGIC water sensor and publishes telemetry every 2 seconds       |
+
+| `dashboard\_subscriber.py` | Subscribes to Grand Marina MQTT topics and displays incoming readings             |
+
+| `screenshots/`            | Contains validation evidence for broker, publisher, subscriber, and full pipeline |
+
+
+
+Telemetry Fields
+
+
+
+Each published reading includes:
+
+
+
+Device ID
+
+Location
+
+Counter
+
+UTC ISO 8601 timestamp
+
+Upstream pressure
+
+Downstream pressure
+
+Pressure differential
+
+Flow rate
+
+
+
+Screenshots
+
+Mosquitto Broker Running
+
+
+
+Publisher Sending Sensor Readings
+
+
+
+Subscriber Dashboard Receiving Readings
+
+
+
+End-to-End Pipeline Validation
+
+
+
+How to Run
+
+1\. Install dependencies
 
 pip install paho-mqtt
 
 
 
-\### 2. Start Mosquitto
-
-```bash
+2\. Start Mosquitto
 
 mosquitto -v
 
 
 
-\### 3. Run Subscriber
-
-```bash
+3\. Start the subscriber dashboard
 
 python dashboard\_subscriber.py
 
 
 
-\### 4. Run Publisher
+4\. Start the sensor publisher
 
-```bash
-
-python dashboard\_subscriber.py
+python sensor\_publisher.py
 
 
 
-\##Key Learning Outcomes
+Validation Results
 
 
 
-\-Built an end-to-end MQTT pipeline
-
-\-Implemented real-time telemetry streaming
-
-\-Practiced publish/subscribe architecture
-
-\-Debugged broker port conflicts and service issues
-
-\-Handled structured JSON data in Python
+The pipeline was successfully validated with:
 
 
 
-\##Security Note
+Mosquitto running on port 1883
+
+Publisher sending readings every 2 seconds
+
+Subscriber receiving and parsing JSON messages
+
+Incrementing message counters
+
+Realistic variation in pressure and flow values
+
+Matching telemetry between publisher and dashboard output
 
 
 
-This pipeline is intentionally insecure and uses an unauthenticated MQTT broker. In a production environment, TLS encryption, authentication, and topic access controls would be required.
+Security Note
+
+
+
+This pipeline is intentionally insecure. It uses a local unauthenticated MQTT broker without TLS encryption. In a production IoT environment, this design would require:
+
+
+
+TLS encryption
+
+Device authentication
+
+Broker access control
+
+Topic-level authorization
+
+Secure credential handling
+
+Monitoring for abnormal publish/subscribe behavior
+
+
+
+This insecure baseline will be useful for future comparison when security controls are added.
+
+
+
+Key Learning Outcomes
+
+Built an end-to-end MQTT pipeline
+
+Practiced real-time IoT telemetry streaming
+
+Implemented MQTT publish/subscribe architecture
+
+Parsed and displayed structured JSON data
+
+Troubleshot broker port conflicts and service issues
+
+Documented pipeline validation using screenshots
+
+
+
+Project Context
+
+
+
+This project was completed as part of the Hydroficient IoT Cyber Defense Externship. It supports a larger smart water monitoring scenario involving MQTT-based telemetry, sensor data pipelines, and future IoT security hardening.
+
+
 
 
 
