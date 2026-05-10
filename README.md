@@ -64,7 +64,7 @@ Sensor → Broker → Dashboard
 
 \### Mosquitto Broker Running
 
-!\[Mosquitto](screenshots/mosquitto-running.png)
+!\[Mosquitto](screenshots\\mosquitto-running.png)
 
 
 
